@@ -1,7 +1,11 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
-import { deleteCabin } from "../../services/apiCabins";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import CreateCabinForm from "./CreateCabinForm";
+import useDeleteCabin from "./useDeleteCabin";
+import { FaCopy } from "react-icons/fa";
+import { MdEdit, MdOutlineDelete } from "react-icons/md";
+import useCreateCabin from "./useCreateCabin";
+
 
 const TableRow = styled.div`
   display: grid;
@@ -41,35 +45,30 @@ const Discount = styled.div`
   font-weight: 500;
   color: var(--color-green-700);
 `;
-
 export default function CabinRow( {cabin} ){
-  const queryClient=useQueryClient();
-
-  const {isLoading:isDisabled,mutate}=useMutation({
-    mutationFn:(id)=>deleteCabin(id),
-    onSuccess:() => {
-      toast.success("Cabin Succesfully deleted")
-      queryClient.invalidateQueries({
-      queryKey:['cabins'],
-    });
-  },
-  onError:()=>{
-    toast.error("Cabin could not be deleted")
-  },
-  
-  })
-  console.log(cabin,'cabin');
-
-  const {id:cabinId,name,maxCapacity,discount,regularPrice}=cabin;
+  const [isEdit,setIsEdit]=useState(false);
+  const {isDeleting,deleteCabin}=useDeleteCabin();
+   const {updateCabin,isCreatingCabin}=useCreateCabin();
+  const {id:cabinId,image,name,maxCapacity,discount,regularPrice,description}=cabin;
+  function handleDuplicate(){
+    updateCabin({
+      name:`copy of${name}`,
+      image,maxCapacity,discount,regularPrice,description
+    })
+  }
   return   <>
   <TableRow>
-    <Img></Img>
+    <Img src={image}></Img>
     <Cabin>{name}</Cabin>
     <div>Max up to {maxCapacity} </div>
     <Price>{regularPrice}</Price>
     <Discount>{discount}</Discount>
-    <button disabled={isDisabled} onClick={()=>mutate(cabinId)}>Delete</button>
-
+    <div>
+    <button onClick={handleDuplicate}><FaCopy/></button>
+    <button onClick={()=>setIsEdit((isEdit)=>!isEdit)}><MdEdit/></button>
+    <button disabled={isDeleting} onClick={()=>deleteCabin(cabinId)}><MdOutlineDelete/></button>
+    </div>
   </TableRow>
+  {isEdit && <CreateCabinForm cabin={cabin}/>}
   </>
 }
