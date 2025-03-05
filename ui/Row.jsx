@@ -10,11 +10,13 @@ ${prop=> prop.type==='horizontal' && css`
 ${prop=> prop.type==='Vertical' && css`
     display:flex;
     flex-direction:column;
-
     align-items:center;
     gap: 2;
 `}
     
 `;
+Row.defaultProps={
+    type:'Vertical'
+}
 
 export default Row;

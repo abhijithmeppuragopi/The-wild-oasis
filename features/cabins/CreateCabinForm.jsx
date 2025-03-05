@@ -8,7 +8,7 @@ import FormRow from "../../ui/FormRow";
 import useCreateCabin from "./useCreateCabin";
 import useUpdateCabin from "./useUpdateCabin";
 
-function CreateCabinForm({cabin ={}}) {
+function CreateCabinForm({cabin ={}, onCloseModal}) {
   const {id:cabinId,...editValues}=cabin;
   const editSession=Boolean(cabinId);
 
@@ -23,17 +23,21 @@ function CreateCabinForm({cabin ={}}) {
     if(editSession)  
       editCabin({newCabinData:{...data,image:image},id:cabinId},{
         onSuccess: (data)=>{
-        reset()}});
+          onCloseModal?.(),
+        reset()
+        
+      }});
    else 
     updateCabin({...data,image:image},{
   onSuccess:(data)=>{
+  onCloseModal?.(),
   reset()}}
 )
     }
 const isWorking= isCreatingCabin || isEditingCabin;
     
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)} type={onCloseModal ? 'modal' : 'regular'}>
       <FormRow label='Cabin name' error={errors.name?.message}>
       <Input type="text" id="name" {...register('name',{ required: "this field is required" })} />
       </FormRow>
@@ -73,7 +77,7 @@ const isWorking= isCreatingCabin || isEditingCabin;
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button disabled={isWorking} variation="secondary" type="clear">
+        <Button disabled={isWorking} onClick={()=>onCloseModal?.()} variation="secondary" type="clear">
           Cancel
         </Button>
         {/* <input type="submit">Submit</input> */}

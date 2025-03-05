@@ -1,10 +1,11 @@
 import styled from "styled-components";
-import { useState } from "react";
 import CreateCabinForm from "./CreateCabinForm";
 import useDeleteCabin from "./useDeleteCabin";
 import { FaCopy } from "react-icons/fa";
 import { MdEdit, MdOutlineDelete } from "react-icons/md";
 import useCreateCabin from "./useCreateCabin";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
 
 
 const TableRow = styled.div`
@@ -46,7 +47,6 @@ const Discount = styled.div`
   color: var(--color-green-700);
 `;
 export default function CabinRow( {cabin} ){
-  const [isEdit,setIsEdit]=useState(false);
   const {isDeleting,deleteCabin}=useDeleteCabin();
    const {updateCabin,isCreatingCabin}=useCreateCabin();
   const {id:cabinId,image,name,maxCapacity,discount,regularPrice,description}=cabin;
@@ -65,10 +65,28 @@ export default function CabinRow( {cabin} ){
     <Discount>{discount}</Discount>
     <div>
     <button onClick={handleDuplicate}><FaCopy/></button>
-    <button onClick={()=>setIsEdit((isEdit)=>!isEdit)}><MdEdit/></button>
-    <button disabled={isDeleting} onClick={()=>deleteCabin(cabinId)}><MdOutlineDelete/></button>
+    <Modal>
+      <Modal.Open opens='edit'>
+      <button><MdEdit/></button>
+      </Modal.Open>
+      <Modal.Window name='edit'>
+      <CreateCabinForm cabin={cabin} />
+      </Modal.Window>
+
+      <Modal.Open opens='delete'>
+      <button><MdOutlineDelete/></button>
+      </Modal.Open>
+      <Modal.Window name='delete'>
+      <ConfirmDelete disabled={isDeleting} onConfirm={()=>deleteCabin(cabinId)}   />
+      </Modal.Window>
+    
+    </Modal>
+    
     </div>
   </TableRow>
-  {isEdit && <CreateCabinForm cabin={cabin}/>}
+   {/* {isEdit && <AddCabin/>}
+   {isEdit && <Modal onClick={()=>setIsEdit((open)=>!open)}>
+    
+    </Modal>} */}
   </>
 }

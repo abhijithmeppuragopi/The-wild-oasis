@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 
  const Button=styled.button`
  ${prop=>sizes[prop.size]};
- ${prop=>variations[prop.varation]};
+ ${prop=>variations[prop.variation]};
 border-radius:var(--border-radius-sm);
 box-shadow:var(--shadow-sm);
 border:none;
