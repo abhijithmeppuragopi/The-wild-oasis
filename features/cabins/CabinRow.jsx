@@ -6,6 +6,8 @@ import { MdEdit, MdOutlineDelete } from "react-icons/md";
 import useCreateCabin from "./useCreateCabin";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
+import Table from "../../ui/Table";
+import Menus from "../../ui/Menus";
 
 
 const TableRow = styled.div`
@@ -57,33 +59,42 @@ export default function CabinRow( {cabin} ){
     })
   }
   return   <>
-  <TableRow>
+  <Table.Row>
     <Img src={image}></Img>
     <Cabin>{name}</Cabin>
     <div>Max up to {maxCapacity} </div>
     <Price>{regularPrice}</Price>
     <Discount>{discount}</Discount>
     <div>
-    <button onClick={handleDuplicate}><FaCopy/></button>
     <Modal>
-      <Modal.Open opens='edit'>
-      <button><MdEdit/></button>
+    <Menus.Menu>
+      <Menus.ToggleButton id={cabinId}/>
+      <Menus.List id={cabinId} position={20}>
+      <Modal.Open opens='delete'>
+      <Menus.Button icon={<MdOutlineDelete/>}>Delete</Menus.Button>
       </Modal.Open>
+      <Modal.Open opens='edit'>
+      <Menus.Button icon={<MdEdit/> }>Edit</Menus.Button>
+      </Modal.Open>
+        
+        <Menus.Button icon={<FaCopy/>} onClick={handleDuplicate}> Duplicate</Menus.Button>
+      </Menus.List>
+     
       <Modal.Window name='edit'>
       <CreateCabinForm cabin={cabin} />
       </Modal.Window>
 
-      <Modal.Open opens='delete'>
-      <button><MdOutlineDelete/></button>
-      </Modal.Open>
+     
       <Modal.Window name='delete'>
       <ConfirmDelete disabled={isDeleting} onConfirm={()=>deleteCabin(cabinId)}   />
       </Modal.Window>
-    
+      </Menus.Menu>
     </Modal>
     
+   
+    
     </div>
-  </TableRow>
+  </Table.Row>
    {/* {isEdit && <AddCabin/>}
    {isEdit && <Modal onClick={()=>setIsEdit((open)=>!open)}>
     

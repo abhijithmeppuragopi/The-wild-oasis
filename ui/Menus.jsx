@@ -1,6 +1,10 @@
+import { createContext, useContext, useState } from "react";
+import { createPortal } from "react-dom";
+import { HiDotsVertical } from "react-icons/hi";
 import styled from "styled-components";
+import useCloseWindow from "../hooks/useCloseWindow";
 
-const StyledMenu = styled.div`
+const Menu = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -44,7 +48,6 @@ const StyledButton = styled.button`
   padding: 1.2rem 2.4rem;
   font-size: 1.4rem;
   transition: all 0.2s;
-
   display: flex;
   align-items: center;
   gap: 1.6rem;
@@ -60,3 +63,60 @@ const StyledButton = styled.button`
     transition: all 0.3s;
   }
 `;
+const MenuContext=createContext();
+function Menus({children}){
+  const[OpenId,setOpenId]=useState("");
+  const[position,setPosition]=useState("");
+  function Close(){
+  setOpenId("")
+  }
+  const Open=setOpenId ;
+return <MenuContext.Provider value={{Close,Open,OpenId,position,setPosition}}>
+ {children}
+ </MenuContext.Provider>
+}
+
+function ToggleButton({id}){
+  const {OpenId,Open,Close,position,setPosition}=useContext(MenuContext);
+
+  function handleClick(e){
+   const rect=   e.target.closest('button').getBoundingClientRect();
+   setPosition({
+    x:window.innerWidth - rect.width - rect.x,
+  y:rect.y + rect.height + 8})
+    OpenId ==="" || OpenId !==id ? Open(id) : Close()
+  }
+return <StyledToggle onClick={handleClick}>
+  <HiDotsVertical/>
+  </StyledToggle>
+}
+function List({id,children}){
+  const{OpenId,position,Close}=useContext(MenuContext);
+  const ref=useCloseWindow(Close);
+  if(OpenId !==id) return null;
+
+return createPortal(
+  <StyledList ref={ref} position={position}>
+    {children}
+  </StyledList>,
+  document.body
+)
+}
+function Button({children,onClick,icon}){
+  const{Close}=useContext(MenuContext);
+function handleClick(){
+  onClick?.();
+  Close();
+}
+return <li>
+<StyledButton onClick={handleClick}>
+  <span>{icon}</span>{children}</StyledButton>
+</li>
+}
+
+Menus.Menu=Menu;
+Menus.ToggleButton=ToggleButton;
+Menus.List=List;
+Menus.Button=Button;
+
+export default Menus;
