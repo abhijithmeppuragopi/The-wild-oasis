@@ -1,18 +1,19 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
-export async function getBooking(id) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("*, cabins(*), guests(*)")
-    .eq("id", id)
-    .single();
-
+export async function getBooking({filter, sortBy}) {
+  let query=supabase
+  .from("bookings")
+  .select("*, cabins(name), guests(fullName,email)")
+  if(filter!==null) 
+    query=query[filter.method](filter.field,filter.value);
+  if(sortBy) 
+    query=query.order(sortBy.field,{ascending:sortBy.value==='asc'});
+  const { data, error } = await query
   if (error) {
     console.error(error);
     throw new Error("Booking not found");
   }
-
   return data;
 }
 

@@ -23,11 +23,11 @@ console.log(filteredCabin,'filter')
  const[field,direction]=sortValue.split('-');
  console.log(field,direction);
  const modifier= direction === 'Asc' ? 1:-1;
- if(field ==='name'){
-sortedCabin=filteredCabin.sort((a,b)=> a.name.localeCompare(b.name));
- } else {
+//  if(field ==='name'){
+// sortedCabin=filteredCabin.sort((a,b)=> a.name.localeCompare(b.name));
+//  } else {
  sortedCabin=filteredCabin.sort((a, b) => (a[field]-b[field])*modifier );
-}
+
 // const sorted=sortedCabin.sort((a, b) => (a[field]-b[field])*modifier );
 console.log(sortedCabin,'sorted');
  
