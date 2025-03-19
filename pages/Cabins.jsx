@@ -20,6 +20,7 @@ function Cabins() {
         {label:'All',value:'all'},
         {label:'With Discount', value:'with-discount'},
         {label:'No Discount', value:'no-discount'}]}/>
+         </p>
       <SortBy options={[
         {label:'Sort by Cabin Name (A-Z)',value:'name-Asc'},
         {label:'Sort by Cabin Name (Z-A)',value:'name-Dsc'},
@@ -29,7 +30,7 @@ function Cabins() {
         {label:'Maximum Night (High-Low)',value:'maxCapacity-Dsc'}
       ]}>
         </SortBy>
-        </p>
+       
       </Row>
       <Row>
       <CabinTable/>

@@ -11,6 +11,7 @@ function Bookings() {
       <p><BookingTableOperations/></p>
     </Row>
     <BookingTable />
+    
 
 </>
   );

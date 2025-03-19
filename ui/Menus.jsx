@@ -67,10 +67,11 @@ const MenuContext=createContext();
 function Menus({children}){
   const[OpenId,setOpenId]=useState("");
   const[position,setPosition]=useState("");
+  const Open=setOpenId ;
   function Close(){
   setOpenId("")
   }
-  const Open=setOpenId ;
+  
 return <MenuContext.Provider value={{Close,Open,OpenId,position,setPosition}}>
  {children}
  </MenuContext.Provider>
@@ -78,7 +79,7 @@ return <MenuContext.Provider value={{Close,Open,OpenId,position,setPosition}}>
 
 function ToggleButton({id}){
   const {OpenId,Open,Close,position,setPosition}=useContext(MenuContext);
-
+//function to calculate the position of the button to display the list
   function handleClick(e){
    const rect=   e.target.closest('button').getBoundingClientRect();
    setPosition({

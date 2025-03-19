@@ -1,20 +1,44 @@
+import { cabins } from "../data/data-cabins";
+import { guests } from "../data/data-guests";
+import { PAGE_COUNT } from "../utils/constants";
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
-export async function getBooking({filter, sortBy}) {
+export async function getBookings({filter, sortBy,page}) {
   let query=supabase
   .from("bookings")
-  .select("*, cabins(name), guests(fullName,email)")
+  .select("*, cabins(name), guests(fullName,email)",{count:'exact'})
   if(filter!==null) 
     query=query[filter.method](filter.field,filter.value);
   if(sortBy) 
     query=query.order(sortBy.field,{ascending:sortBy.value==='asc'});
-  const { data, error } = await query
+  if(page){
+  const from=(page-1)*PAGE_COUNT;
+  const to=(from + PAGE_COUNT)-1;
+  query=query.range(from,to)
+}
+   
+  const { data,count, error } = await query
   if (error) {
     console.error(error);
     throw new Error("Booking not found");
   }
-  return data;
+  return {data,count};
+}
+
+export async function getBooking(id){
+  const {data,error}=await supabase
+  .from("bookings")
+  .select('*,cabins(*),guests(*)')
+  .eq('id',id)
+  .single()
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking not found");
+  }
+  console.log(data)
+return data
 }
 
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
