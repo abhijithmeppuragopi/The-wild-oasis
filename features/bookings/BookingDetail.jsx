@@ -27,8 +27,6 @@ function BookingDetail() {
   const {isdeleteBooking,isDeletingBooking}= useDeleteBooking();
   const navigate=useNavigate();
   
-  
-
   const moveBack = useMoveBack();
 
   const statusToTagName = {

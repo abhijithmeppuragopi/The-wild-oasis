@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import DashboardBox from "./DashboardBox";
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import Heading from "../../ui/Heading";
+import { eachDayOfInterval, format, isSameDay, subDays } from "date-fns";
 
 const StyledSalesChart = styled(DashboardBox)`
   grid-column: 1 / -1;
@@ -57,3 +60,41 @@ const colors = isDarkMode
       text: "#374151",
       background: "#fff",
     };
+
+    export default function SalesChart({bookings,numDays}){
+      const allDays=eachDayOfInterval({
+        start:subDays(new Date(),numDays-1),
+        end:new Date()
+      })
+      const data=allDays.map((date)=>{ 
+        return {
+        label:format(date,'MMM dd'),
+        totalSales:bookings.filter(booking=>isSameDay(date,new Date(booking.created_at))).reduce((total,cur)=>total + cur.totalPrice ,0),
+        extrasSales:bookings.filter(booking=>isSameDay(date,new Date(booking.created_at))).reduce((total,cur)=>total + cur.extrasPrice ,0)
+      }
+    })
+      return <StyledSalesChart>
+        <Heading as='h2'>Sales from {format(allDays[numDays-1],'dd MMM yy')} to {format(allDays[0],'dd MMM yy')}  </Heading>
+        <ResponsiveContainer height={300} width='100%'>
+        <AreaChart
+          width={500}
+          height={400}
+          data={data}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="label" />
+          <YAxis unit='$' />
+          <Tooltip />
+          <Area type="monotone" dataKey="totalSales" name="totalSales" unit='$' stackId="1" stroke={colors.totalSales.stroke} fill={colors.totalSales.fill} />
+          <Area type="monotone" dataKey="extrasSales" name="extrasSales" unit='$' stackId="1" stroke={colors.extrasSales.stroke} fill={colors.extrasSales.fill} />
+         
+        </AreaChart>
+      </ResponsiveContainer>
+      </StyledSalesChart>
+    }

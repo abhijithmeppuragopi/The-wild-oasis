@@ -70,6 +70,9 @@ export default function MainNav()
     <StyledNavLink to='/cabins'> <HiHomeModern/><span>Cabins</span></StyledNavLink>
     </li>
     <li>
+    <StyledNavLink to='/users'> <HiHomeModern/><span>Users</span></StyledNavLink>
+    </li>
+    <li>
     <StyledNavLink to='/settings'> <HiCog6Tooth/><span>Settings</span></StyledNavLink>
     </li>
 

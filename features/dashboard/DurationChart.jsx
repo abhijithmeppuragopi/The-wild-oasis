@@ -1,4 +1,7 @@
 import styled from "styled-components";
+import Heading from "../../ui/Heading";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { dataTagErrorSymbol } from "@tanstack/react-query";
 
 const ChartBox = styled.div`
   /* Box */
@@ -18,7 +21,7 @@ const ChartBox = styled.div`
   }
 `;
 
-const startDataLight = [
+const startData = [
   {
     duration: "1 night",
     value: 0,
@@ -84,7 +87,7 @@ const startDataDark = [
   },
   {
     duration: "6-7 nights",
-    value: 0,
+    value: 1,
     color: "#15803d",
   },
   {
@@ -129,4 +132,33 @@ function prepareData(startData, stays) {
     .filter((obj) => obj.value > 0);
 
   return data;
+}
+export default function DurationChart({confirmedStays}){
+  console.log(confirmedStays,'confirmed');
+  const data=prepareData(startData,confirmedStays);
+  console.log(data);
+  return <ChartBox>
+    <Heading as='h2'>Stay duration Summary</Heading>
+    <ResponsiveContainer height={400} width="100%">
+    <PieChart width={600} height={700}>
+
+      <Pie data={data}
+       cx={180}
+       cy={100}
+      innerRadius={60}
+      outerRadius={100}
+      paddingAngle={5}
+      nameKey='duration'
+      dataKey="value"
+      fill="orange" >
+        {startData.map((data)=><Cell fill={data.color} stroke={data.color} key={data.duration}/>)}
+       
+      </Pie>
+      <Tooltip/>
+      <Legend layout="vertical" verticalAlign="top" align="right"/>
+    
+      </PieChart> 
+      </ResponsiveContainer>
+
+  </ChartBox>
 }
